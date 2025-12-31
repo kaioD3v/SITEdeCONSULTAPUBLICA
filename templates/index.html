@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Consulta Cidadã</title>
+  <link rel="stylesheet" href="../static/css/indexStyle.css" />
+</head>
+<body>
+
+  <header class="header">
+    <h1>Consulta Cidadã</h1>
+    <p>Informe seus dados para acessar as informações</p>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <form id="consultaForm">
+        <label for="cpf">CPF</label>
+        <input
+          type="text"
+          id="cpf"
+          placeholder="000.000.000-00"
+          autocomplete="off"
+          required
+        />
+
+        <label for="numero">Telefone</label>
+        <input
+          type="text"
+          id="numero"
+          placeholder="(00) 9 0000-0000"
+          autocomplete="off"
+          required
+        />
+
+        <p id="erroMsg" class="erro"></p>
+
+        <button type="submit">Entrar</button>
+      </form>
+    </div>
+  </main>
+
+  <footer class="footer">
+    © 2025 — Dados públicos para fins informativos
+  </footer>
+
+  <script src="../static/scripts/indexJS.js"></script>
+</body>
+</html>
