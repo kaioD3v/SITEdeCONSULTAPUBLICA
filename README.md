@@ -1,4 +1,4 @@
-# Monitor de Metas Públicas
+# Monitor de Metas Públicas (em desenvolvimento)
 
 O **Monitor de Metas Públicas** é um projeto web que permite acompanhar o progresso de metas anunciadas, como a construção de creches. Ele possui duas páginas principais:
 
