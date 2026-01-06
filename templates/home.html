@@ -2,8 +2,10 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Monitor de Metas Públicas</title>
-  <link rel="stylesheet" href="../static/css/homeStyle.css">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/homeStyle.css') }}">
 </head>
 <body>
 
@@ -41,6 +43,26 @@
   </section>
 </main>
 
-<script src="../static/scripts/homeJS.js"></script>
+<!-- OVERLAY -->
+<section id="overlayNome" class="overlay hidden">
+  <div class="overlay-card">
+    <h2>Complete seu cadastro</h2>
+    <p>Informe seu nome para continuar</p>
+
+    <input
+      type="text"
+      id="nomeUsuario"
+      placeholder="Seu nome completo"
+      autocomplete="off"
+    />
+
+    <span id="erroNome" class="erro"></span>
+
+    <button id="salvarNome">Continuar</button>
+  </div>
+</section>
+
+<script src="{{ url_for('static', filename='scripts/homeJS.js') }}"></script>
+
 </body>
 </html>

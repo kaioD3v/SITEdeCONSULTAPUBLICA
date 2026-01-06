@@ -5,6 +5,7 @@ from flask import (
 from dotenv import load_dotenv
 import os
 import secrets
+import re
 from sqlalchemy.exc import IntegrityError
 
 from database import db, get_database_uri
@@ -15,7 +16,6 @@ from models import Informacoes, Creche, gerar_hash
 # =========================
 
 load_dotenv()
-
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
     raise RuntimeError("SECRET_KEY não definida")
@@ -37,7 +37,6 @@ app = Flask(
 app.config["SQLALCHEMY_DATABASE_URI"] = get_database_uri()
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = SECRET_KEY
-
 db.init_app(app)
 
 # =========================
@@ -50,7 +49,6 @@ def gerar_csrf_token():
 def validar_csrf():
     token_cookie = request.cookies.get("csrf_token")
     token_header = request.headers.get("X-CSRF-Token")
-
     return token_cookie and token_header and token_cookie == token_header
 
 @app.after_request
@@ -71,13 +69,11 @@ def set_csrf_cookie(response):
 def index():
     return render_template("index.html")
 
-
 @app.route("/home")
 def home():
     if request.cookies.get("auth") != "1":
         return redirect("/")
     return render_template("home.html")
-
 
 @app.route("/admin")
 def admin():
@@ -102,7 +98,7 @@ def verificar_sessao():
     }), 200
 
 # =========================
-# API - INFORMACOES
+# API - INFORMACOES (LOGIN / CADASTRO)
 # =========================
 
 @app.route("/api/informacoes", methods=["POST"])
@@ -112,10 +108,9 @@ def criar_informacoes():
 
     try:
         data = request.get_json()
-
         cpf = data.get("cpf")
         telefone = data.get("telefone")
-        nome = data.get("nome", "Sem Nome")
+        nome = data.get("nome", "Sem Nome")  # nome provisório
 
         if not cpf or not telefone:
             return jsonify({"erro": "Dados inválidos"}), 400
@@ -126,7 +121,7 @@ def criar_informacoes():
         registro_cpf = Informacoes.query.filter_by(cpf_hash=cpf_hash).first()
         registro_tel = Informacoes.query.filter_by(telefone_hash=telefone_hash).first()
 
-        # LOGIN
+        # 1️⃣ LOGIN NORMAL
         if registro_cpf and registro_tel:
             if registro_cpf.id != registro_tel.id:
                 return jsonify({"erro": "CPF e telefone não correspondem"}), 403
@@ -135,7 +130,6 @@ def criar_informacoes():
                 "sucesso": True,
                 "admin": registro_cpf.admin
             }))
-
             response.set_cookie("auth", "1", httponly=True, samesite="Lax")
             response.set_cookie(
                 "admin",
@@ -143,19 +137,23 @@ def criar_informacoes():
                 httponly=True,
                 samesite="Lax"
             )
-
+            response.set_cookie(
+                "user_id",
+                str(registro_cpf.id),
+                httponly=True,
+                samesite="Lax"
+            )
             return response, 200
 
-        # ERROS
+        # 2️⃣ CASO DE INCONSISTÊNCIA
         if registro_cpf and not registro_tel:
             return jsonify({"erro": "Telefone incorreto para este CPF"}), 403
-
         if registro_tel and not registro_cpf:
             return jsonify({"erro": "CPF incorreto para este telefone"}), 403
 
-        # CADASTRO
+        # 3️⃣ CADASTRO DE NOVO USUÁRIO
         info = Informacoes()
-        info.set_nome(nome)
+        info.set_nome(nome)  # "Sem Nome" provisório
         info.set_cpf(cpf)
         info.set_telefone(telefone)
 
@@ -166,35 +164,74 @@ def criar_informacoes():
             "sucesso": True,
             "admin": False
         }))
-
         response.set_cookie("auth", "1", httponly=True, samesite="Lax")
         response.set_cookie("admin", "0", httponly=True, samesite="Lax")
+        response.set_cookie("user_id", str(info.id), httponly=True, samesite="Lax")
 
         return response, 201
 
     except IntegrityError:
         db.session.rollback()
         return jsonify({"erro": "CPF ou telefone já cadastrado"}), 400
-
     except Exception as e:
         print("ERRO:", e)
         db.session.rollback()
         return jsonify({"erro": "Erro interno"}), 500
 
 # =========================
-# API - CRECHE
+# API - STATUS USUARIO
 # =========================
 
-@app.route("/api/creche", methods=["GET"])
-def get_creche():
-    creche = Creche.query.first()
-    if not creche:
-        return jsonify({"erro": "Dados não encontrados"}), 404
+@app.route("/api/usuario/status", methods=["GET"])
+def status_usuario():
+    if request.cookies.get("auth") != "1":
+        return jsonify({"logado": False}), 401
 
-    return jsonify({
-        "existentes": creche.total_existentes,
-        "prometidas": creche.total_prometidas
-    })
+    user_id = request.cookies.get("user_id")
+    if not user_id:
+        return jsonify({"nome_pendente": True}), 200
+
+    info = Informacoes.query.filter_by(id=int(user_id)).first()
+    if not info:
+        return jsonify({"nome_pendente": True}), 200
+
+    # considera "Sem Nome" como pendente
+    nome_pendente = not info.nome_criptografado or info.get_nome() == "Sem Nome"
+
+    return jsonify({"nome_pendente": nome_pendente}), 200
+
+# =========================
+# API - COMPLETAR NOME
+# =========================
+
+@app.route("/api/completar-nome", methods=["POST"])
+def completar_nome():
+    if not validar_csrf():
+        return jsonify({"erro": "CSRF inválido"}), 403
+
+    if request.cookies.get("auth") != "1":
+        return jsonify({"erro": "Não autorizado"}), 401
+
+    user_id = request.cookies.get("user_id")
+    if not user_id:
+        return jsonify({"erro": "Usuário inválido"}), 400
+
+    data = request.get_json()
+    nome = data.get("nome", "").strip()
+
+    if len(nome) < 3:
+        return jsonify({"erro": "Nome muito curto"}), 400
+    if not re.match(r"^[A-Za-zÀ-ÿ ]+$", nome):
+        return jsonify({"erro": "Nome inválido"}), 400
+
+    info = Informacoes.query.filter_by(id=int(user_id)).first()
+    if not info:
+        return jsonify({"erro": "Usuário inválido"}), 400
+
+    info.set_nome(nome)
+    db.session.commit()
+
+    return jsonify({"sucesso": True}), 200
 
 # =========================
 # INIT DB
@@ -203,12 +240,8 @@ def get_creche():
 def inicializar_banco():
     with app.app_context():
         db.create_all()
-
         if not Creche.query.first():
-            db.session.add(Creche(
-                total_existentes=0,
-                total_prometidas=0
-            ))
+            db.session.add(Creche(total_existentes=0, total_prometidas=0))
             db.session.commit()
 
 # =========================

@@ -19,6 +19,20 @@ def gerar_hash(valor):
     return hashlib.sha256(valor.encode()).hexdigest()
 
 
+def encrypt(valor: str) -> str:
+    """Criptografa e retorna em base64"""
+    encrypted = cipher.encrypt(valor.encode())
+    return base64.b64encode(encrypted).decode()
+
+
+def decrypt(valor_base64: str) -> str:
+    """Descriptografa valor em base64"""
+    if not valor_base64:
+        return ""
+    encrypted = base64.b64decode(valor_base64.encode())
+    return cipher.decrypt(encrypted).decode()
+
+
 class Informacoes(db.Model):
     __tablename__ = "informacoes"
 
@@ -33,25 +47,31 @@ class Informacoes(db.Model):
     cpf_hash = db.Column(db.String(64), nullable=False, unique=True)
     telefone_hash = db.Column(db.String(64), nullable=False, unique=True)
 
-    # 👑 Campo ADMIN (NOVO)
+    # Campo ADMIN
     admin = db.Column(db.Boolean, default=False, nullable=False)
 
     # =========================
     # Métodos de criptografia
     # =========================
     def set_nome(self, nome):
-        encrypted = cipher.encrypt(nome.encode())
-        self.nome_criptografado = base64.b64encode(encrypted).decode()
+        self.nome_criptografado = encrypt(nome)
+
+    def get_nome(self):
+        return decrypt(self.nome_criptografado)
 
     def set_cpf(self, cpf):
-        encrypted = cipher.encrypt(cpf.encode())
-        self.cpf_criptografado = base64.b64encode(encrypted).decode()
+        self.cpf_criptografado = encrypt(cpf)
         self.cpf_hash = gerar_hash(cpf)
 
+    def get_cpf(self):
+        return decrypt(self.cpf_criptografado)
+
     def set_telefone(self, telefone):
-        encrypted = cipher.encrypt(telefone.encode())
-        self.telefone_criptografado = base64.b64encode(encrypted).decode()
+        self.telefone_criptografado = encrypt(telefone)
         self.telefone_hash = gerar_hash(telefone)
+
+    def get_telefone(self):
+        return decrypt(self.telefone_criptografado)
 
 
 class Creche(db.Model):
