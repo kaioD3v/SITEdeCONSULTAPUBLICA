@@ -234,6 +234,40 @@ def completar_nome():
     return jsonify({"sucesso": True}), 200
 
 # =========================
+# API - CRECHES (DADOS PÚBLICOS)
+# =========================
+
+@app.route("/api/creches", methods=["GET"])
+def dados_creches():
+    creche = Creche.query.first()
+
+    if not creche:
+        return jsonify({
+            "entregues": 0,
+            "prometidas": 0
+        }), 200
+
+    return jsonify({
+        "entregues": creche.total_existentes,
+        "prometidas": creche.total_prometidas
+    }), 200
+
+# =========================
+# API - LOGOUT
+# =========================
+
+@app.route("/logout")
+def logout():
+    response = make_response(redirect("/"))
+
+    # Remove cookies de sessão
+    response.delete_cookie("auth")
+    response.delete_cookie("admin")
+    response.delete_cookie("user_id")
+
+    return response
+
+# =========================
 # INIT DB
 # =========================
 

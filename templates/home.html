@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,62 +8,63 @@
 
   <link rel="stylesheet" href="{{ url_for('static', filename='css/homeStyle.css') }}">
 </head>
+
 <body>
 
-<header class="header">
-  <h1>Monitor de Metas Públicas</h1>
-  <p>Acompanhamento de compromissos anunciados</p>
-</header>
+  <header class="header">
+    <h1>Monitor de Metas Públicas</h1>
+    <p>Acompanhamento de compromissos anunciados</p>
+  </header>
 
-<main class="container">
-  <section class="card meta-card">
-    <h2>Creches prometidas</h2>
+  <main class="container">
+    <section class="card meta-card">
+      <h2>Creches prometidas</h2>
 
-    <div class="numeros">
-      <div>
-        <span id="entregues" class="entregues">1</span>
-        <small>Entregues</small>
+      <div class="numeros">
+        <div>
+          <!-- ENTREGUES (vem do BD via JS) -->
+          <span id="entregues" class="entregues"></span>
+          <small>Entregues</small>
+        </div>
+
+        <div>
+          <!-- PROMETIDAS (vem do BD via JS) -->
+          <span id="prometidas"></span>
+          <small>Prometidas</small>
+        </div>
       </div>
-      <div>
-        <span id="total">250</span>
-        <small>Prometidas</small>
+
+      <div class="barra">
+        <div class="progresso" id="barraProgresso"></div>
       </div>
+
+      <p class="percentual">
+        <!-- PORCENTAGEM calculada no JS -->
+        <span id="percentual"></span> concluído
+      </p>
+
+      <p class="obs">
+        Dados apresentados para fins informativos com base em anúncios públicos.
+      </p>
+    </section>
+  </main>
+
+  <!-- OVERLAY -->
+  <section id="overlayNome" class="overlay hidden">
+    <div class="overlay-card">
+      <h2>Complete seu cadastro</h2>
+      <p>Informe seu nome completo para continuar</p>
+
+      <input type="text" id="nomeUsuario" placeholder="Seu nome completo" autocomplete="off" />
+
+      <span id="erroNome" class="erro"></span>
+
+      <button id="salvarNome">Continuar</button>
     </div>
-
-    <div class="barra">
-      <div class="progresso" id="barraProgresso"></div>
-    </div>
-
-    <p class="percentual">
-      <span id="percentual">0%</span> concluído
-    </p>
-
-    <p class="obs">
-      Dados apresentados para fins informativos com base em anúncios públicos.
-    </p>
   </section>
-</main>
 
-<!-- OVERLAY -->
-<section id="overlayNome" class="overlay hidden">
-  <div class="overlay-card">
-    <h2>Complete seu cadastro</h2>
-    <p>Informe seu nome para continuar</p>
-
-    <input
-      type="text"
-      id="nomeUsuario"
-      placeholder="Seu nome completo"
-      autocomplete="off"
-    />
-
-    <span id="erroNome" class="erro"></span>
-
-    <button id="salvarNome">Continuar</button>
-  </div>
-</section>
-
-<script src="{{ url_for('static', filename='scripts/homeJS.js') }}"></script>
+  <script src="{{ url_for('static', filename='scripts/homeJS.js') }}"></script>
 
 </body>
+
 </html>

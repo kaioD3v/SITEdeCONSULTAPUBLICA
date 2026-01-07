@@ -19,6 +19,7 @@ body {
   padding: 50px 20px;
   background: linear-gradient(135deg, #1e293b, #020617);
   border-bottom: 1px solid #020617;
+  position: relative;
 }
 
 .header h1 {
@@ -186,7 +187,7 @@ body {
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  background: #461ae6;
+  background: #4744ef;
   color: #fff;
   font-weight: bold;
 }
@@ -197,6 +198,7 @@ body {
   display: block;
   margin-bottom: 10px;
 }
+
 
 /* =========================
    ANIMAÇÕES
@@ -216,4 +218,138 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+
+.btn-adm {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  background: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(6px);
+
+  border: 1px solid #1e293b;
+  border-radius: 999px;
+
+  padding: 8px 14px;
+
+  color: #e5e7eb;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.15s ease;
+}
+
+.btn-adm i {
+  font-size: 13px;
+  color: #cbd5f5;
+}
+
+/* Hover */
+.btn-adm:hover {
+  background: #020617;
+  border-color: #334155;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+  transform: translateY(-1px);
+}
+
+/* Hover muda cor dos ícones */
+.btn-adm:hover i {
+  color: #fdfdfd;
+}
+
+/* Active (clique) */
+.btn-adm:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* =========================
+   MENU ADMIN
+========================= */
+
+.adm-menu {
+  position: absolute;
+  top: 58px;
+  right: 20px;
+
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+
+  width: 190px;
+  padding: 6px;
+
+  box-shadow: 0 15px 35px rgba(0,0,0,0.55);
+
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 1000;
+}
+
+.adm-menu.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.adm-menu ul {
+  list-style: none;
+}
+
+.adm-menu li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 12px;
+  border-radius: 8px;
+
+  font-size: 14px;
+  color: #e5e7eb;
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.adm-menu li i {
+  font-size: 14px;
+  color: #cbd5f5;
+}
+
+.adm-menu li:hover {
+  background: #1e293b;
+}
+
+.adm-menu .divider {
+  height: 1px;
+  background: #1e293b;
+  margin: 6px 0;
+  pointer-events: none;
+}
+
+.adm-menu .sair {
+  color: #f87171;
+}
+
+.adm-menu .sair i {
+  color: #f87171;
+}
+
+.adm-menu .sair:hover {
+  background: rgba(239,68,68,0.15);
 }

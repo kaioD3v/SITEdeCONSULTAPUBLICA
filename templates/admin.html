@@ -1,46 +1,77 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <title>Monitor de Metas Públicas</title>
-  <link rel="stylesheet" href="../static/css/homeStyle.css">
+  <script src="https://kit.fontawesome.com/fc0a1db65c.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="../static/css/adminStyle.css">
 </head>
+
 <body>
 
-<header class="header">
-  <h1>ADIMINNNNASTROs</h1>
-  <p>Acompanhamento de compromissos anunciados</p>
-</header>
-
-<main class="container">
-  <section class="card meta-card">
-    <h2>Creches prometidas</h2>
-
-    <div class="numeros">
-      <div>
-        <span id="entregues" class="entregues">1</span>
-        <small>Entregues</small>
-      </div>
-      <div>
-        <span id="total">250</span>
-        <small>Prometidas</small>
-      </div>
+  <header class="header">
+    <h1>ADIMINNNNASTROs</h1>
+    <p>Acompanhamento de compromissos anunciados</p>
+    <button class="btn-adm">
+      <i class="fas fa-user"></i>
+      <span>ADM</span>
+      <i class="fas fa-chevron-down"></i>
+    </button>
+    <div class="adm-menu" id="admMenu">
+      <ul>
+        <li data-action="info">
+          <i class="fas fa-circle-info"></i>
+          Informações
+        </li>
+        <li data-action="creches">
+          <i class="fas fa-school"></i>
+          Creches
+        </li>
+        <li class="divider"></li>
+        <li data-action="logout" class="sair">
+          <i class="fas fa-right-from-bracket"></i>
+          Sair
+        </li>
+      </ul>
     </div>
 
-    <div class="barra">
-      <div class="progresso" id="barraProgresso"></div>
-    </div>
+  </header>
 
-    <p class="percentual">
-      <span id="percentual">0%</span> concluído
-    </p>
+  <main class="container">
+    <section class="card meta-card">
+      <h2>Creches prometidas</h2>
 
-    <p class="obs">
-      Dados apresentados para fins informativos com base em anúncios públicos.
-    </p>
-  </section>
-</main>
+      <div class="numeros">
+        <div>
+          <!-- ENTREGUES (vem do BD via JS) -->
+          <span id="entregues" class="entregues"></span>
+          <small>Entregues</small>
+        </div>
 
-<script src="../static/scripts/homeJS.js"></script>
+        <div>
+          <!-- PROMETIDAS (vem do BD via JS) -->
+          <span id="prometidas"></span>
+          <small>Prometidas</small>
+        </div>
+      </div>
+
+      <div class="barra">
+        <div class="progresso" id="barraProgresso"></div>
+      </div>
+
+      <p class="percentual">
+        <!-- PORCENTAGEM calculada no JS -->
+        <span id="percentual"></span> concluído
+      </p>
+
+      <p class="obs">
+        Dados apresentados para fins informativos com base em anúncios públicos.
+      </p>
+    </section>
+  </main>
+
+  <script src="../static/scripts/adminJS.js"></script>
 </body>
+
 </html>

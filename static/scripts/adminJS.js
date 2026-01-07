@@ -117,3 +117,46 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Erro ao carregar dados das creches:", err);
   }
 });
+
+/* =========================
+   MENU ADMIN
+========================= */
+
+const btnAdm = document.querySelector(".btn-adm");
+const admMenu = document.getElementById("admMenu");
+
+if (btnAdm && admMenu) {
+  btnAdm.addEventListener("click", (e) => {
+    e.stopPropagation();
+    admMenu.classList.toggle("open");
+  });
+
+  // Fecha ao clicar fora
+  document.addEventListener("click", () => {
+    admMenu.classList.remove("open");
+  });
+
+  // Ações do menu
+  admMenu.addEventListener("click", (e) => {
+    const item = e.target.closest("li");
+    if (!item || item.classList.contains("divider")) return;
+
+    const action = item.dataset.action;
+
+    switch (action) {
+      case "info":
+        alert("Abrir Informações");
+        break;
+
+      case "creches":
+        alert("Abrir Creches");
+        break;
+
+      case "logout":
+        window.location.href = "/logout";
+        break;
+    }
+
+    admMenu.classList.remove("open");
+  });
+}
