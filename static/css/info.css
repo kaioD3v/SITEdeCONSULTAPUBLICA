@@ -1,0 +1,378 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: #0f172a;
+  color: #e5e7eb;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
+  padding: 40px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, #1e293b, #020617);
+  position: relative;
+  border-bottom: 1px solid #020617;
+}
+
+.header h1 {
+  font-size: 2.2rem;
+}
+
+/* CONTAINER */
+.container {
+  padding: 40px 25px;
+}
+
+/* GRID */
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+/* CARD */
+.user-card {
+  background: #020617;
+  border-radius: 16px;
+  padding: 25px;
+  padding-right: 60px;
+  box-shadow: 0 0 25px rgba(0,0,0,0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+
+.user-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+}
+
+/* HEADER CARD */
+.user-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.user-name {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.badge-admin {
+  background: rgba(34,197,94,0.15);
+  color: #22c55e;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  margin-left: auto;
+}
+
+/* INFO */
+.user-info {
+  font-size: 14px;
+  color: #cbd5f5;
+}
+
+.user-info div {
+  margin-bottom: 8px;
+}
+
+.user-info i {
+  width: 18px;
+  color: #94a3b8;
+}
+
+/* BOTAO ADM */
+.btn-adm {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  background: rgba(2,6,23,0.85);
+  border: 1px solid #1e293b;
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: #e5e7eb;
+  display: flex;
+  gap: 8px;
+  cursor: pointer;
+}
+
+/* MENU */
+.adm-menu {
+  position: absolute;
+  top: 58px;
+  right: 20px;
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  width: 180px;
+  padding: 6px;
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  transition: 0.25s;
+  z-index: 2000;
+}
+
+.adm-menu.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.adm-menu ul {
+  list-style: none;
+}
+
+.adm-menu li {
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.adm-menu li:hover {
+  background: #1e293b;
+}
+
+.divider {
+  height: 1px;
+  background: #1e293b;
+  margin: 6px 0;
+}
+
+.sair {
+  color: #f87171;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-box {
+  background: #111;
+  padding: 24px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  color: #fff;
+  text-align: center;
+}
+
+.modal-box.danger h2 {
+  color: #ff4d4d;
+}
+
+.modal-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-danger {
+  background: #ff4d4d;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #e63939;
+}
+
+/* ALERTA TOPO */
+.alert-top {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #7c2d12;
+  color: #fff;
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  z-index: 1000;
+  max-width: 320px;
+  animation: slideIn 0.3s ease;
+}
+
+.alert-top.hidden {
+  display: none;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   AÇÕES DO USUÁRIO
+========================= */
+
+.user-actions {
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  transform: translateY(-50%);
+}
+
+.btn-delete {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  font-size: 18px;
+  padding: 6px;
+  border-radius: 50%;
+  transition: 0.25s;
+}
+
+.btn-delete:hover {
+  color: #ef4444;
+  background: rgba(239,68,68,0.12);
+  transform: scale(1.1);
+}
+
+
+/* =========================
+   AÇÕES DO USUÁRIO
+========================= */
+
+.user-actions {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* BOTÃO ADMIN */
+/* =========================
+   BOTÃO TOGGLE ADMIN (UX PREMIUM)
+========================= */
+
+/* =========================
+   BOTÃO TOGGLE ADMIN (CORRIGIDO)
+========================= */
+
+.btn-admin-toggle {
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+
+  color: #94a3b8;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 17px;
+  line-height: 1;
+
+  transition: 0.25s;
+  position: relative;
+}
+
+/* Tornar admin */
+.btn-admin-toggle[data-admin="false"]:hover {
+  color: #00da0b;
+  background: rgba(99,102,241,0.15);
+  transform: scale(1.1);
+}
+
+/* Já é admin */
+.btn-admin-toggle[data-admin="true"] {
+  color: #0817ea;
+}
+
+/* Remover admin */
+.btn-admin-toggle[data-admin="true"]:hover {
+  color: #fd4747;
+  background: rgba(234,179,8,0.18);
+  transform: scale(1.1);
+}
+
+/* ÍCONE */
+.btn-admin-toggle i {
+  pointer-events: none;
+}
+
+/* TOOLTIP */
+.btn-admin-toggle::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  right: 44px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #020617;
+  color: #e5e7eb;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.2s;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.45);
+}
+
+.btn-admin-toggle:hover::after {
+  opacity: 1;
+}
+
+.user-card.is-admin {
+  border: 1px solid #22c55e;
+  background: linear-gradient(180deg, #0b1f14, #050b08);
+}
+
+.btn-admin-toggle.is-admin {
+  background: rgba(34,197,94,0.25);
+  color: #22c55e;
+}

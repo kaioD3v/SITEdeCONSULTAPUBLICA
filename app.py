@@ -83,6 +83,19 @@ def admin():
         return redirect("/home")
     return render_template("admin.html")
 
+@app.route("/creche")
+def pagina_creche():
+    if request.cookies.get("auth") != "1":
+        return redirect("/")
+    return render_template("creches.html")
+
+
+@app.route("/informacoes")
+def pagina_informacoes():
+    if request.cookies.get("auth") != "1":
+        return redirect("/")
+    return render_template("informacoes.html")
+
 # =========================
 # API - SESSION
 # =========================
@@ -266,6 +279,125 @@ def logout():
     response.delete_cookie("user_id")
 
     return response
+
+
+# =========================
+# API - LISTAR INFORMACOES (ADMIN)
+# =========================
+
+@app.route("/api/informacoes/listar", methods=["GET"])
+def listar_informacoes():
+    # Verifica login
+    if request.cookies.get("auth") != "1":
+        return jsonify({"erro": "Não autorizado"}), 401
+
+    # Verifica admin
+    if request.cookies.get("admin") != "1":
+        return jsonify({"erro": "Acesso negado"}), 403
+
+    usuarios = Informacoes.query.all()
+
+    resultado = []
+    for u in usuarios:
+        resultado.append({
+            "id": u.id,
+            "nome": u.get_nome(),
+            "cpf": u.get_cpf(),
+            "telefone": u.get_telefone(),
+            "admin": u.admin
+        })
+
+    return jsonify(resultado), 200
+
+
+# =========================
+# API - EXCLUIR INFORMACOES (ADMIN)
+# =========================
+
+@app.route("/api/informacoes/<int:user_id>", methods=["DELETE"])
+def excluir_usuario(user_id):
+    if request.cookies.get("auth") != "1":
+        return jsonify({"erro": "Não autorizado"}), 401
+
+    if request.cookies.get("admin") != "1":
+        return jsonify({"erro": "Acesso negado"}), 403
+
+    if not validar_csrf():
+        return jsonify({"erro": "CSRF inválido"}), 403
+
+    usuario = Informacoes.query.filter_by(id=user_id).first()
+
+    if not usuario:
+        return jsonify({"erro": "Usuário não encontrado"}), 404
+
+    # 🔒 NÃO permitir auto-exclusão
+    if str(usuario.id) == request.cookies.get("user_id"):
+        return jsonify({"erro": "Você não pode se excluir"}), 400
+
+    # 🔒 NOVA REGRA: ADMIN NÃO EXCLUI ADMIN
+    if usuario.admin:
+        return jsonify({
+            "erro": "ADMIN_NAO_PODE_EXCLUIR_ADMIN"
+        }), 403
+
+    db.session.delete(usuario)
+    db.session.commit()
+
+    return jsonify({"sucesso": True}), 200
+
+# =========================
+# API - ATUALIZAR ADMIN (ADMIN)
+# =========================
+
+@app.route("/api/informacoes/<int:user_id>/admin", methods=["PATCH"])
+def atualizar_admin(user_id):
+    # Verifica login
+    if request.cookies.get("auth") != "1":
+        return jsonify({"erro": "Não autorizado"}), 401
+
+    # Verifica admin
+    if request.cookies.get("admin") != "1":
+        return jsonify({"erro": "Acesso negado"}), 403
+
+    # CSRF
+    if not validar_csrf():
+        return jsonify({"erro": "CSRF inválido"}), 403
+
+    # Usuário logado
+    user_logado_id = request.cookies.get("user_id")
+
+    if str(user_id) == user_logado_id:
+        return jsonify({
+            "erro": "Você não pode alterar seu próprio nível de acesso"
+        }), 400
+
+    data = request.get_json()
+    novo_admin = data.get("admin")
+
+    if not isinstance(novo_admin, bool):
+        return jsonify({"erro": "Valor inválido"}), 400
+
+    usuario = Informacoes.query.filter_by(id=user_id).first()
+
+    if not usuario:
+        return jsonify({"erro": "Usuário não encontrado"}), 404
+
+    # 🔒 NÃO remover o último admin
+    if usuario.admin and not novo_admin:
+        total_admins = Informacoes.query.filter_by(admin=True).count()
+
+        if total_admins <= 1:
+            return jsonify({
+                "erro": "Não é possível remover o último administrador do sistema"
+            }), 400
+
+    usuario.admin = novo_admin
+    db.session.commit()
+
+    return jsonify({
+        "sucesso": True,
+        "admin": usuario.admin
+    }), 200
 
 # =========================
 # INIT DB

@@ -145,11 +145,11 @@ if (btnAdm && admMenu) {
 
     switch (action) {
       case "info":
-        alert("Abrir Informações");
+        window.location.href = "/informacoes";
         break;
 
       case "creches":
-        alert("Abrir Creches");
+        window.location.href = "/creche";
         break;
 
       case "logout":
